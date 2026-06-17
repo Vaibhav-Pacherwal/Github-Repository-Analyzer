@@ -2,6 +2,7 @@ import express, { response } from "express";
 import cors from "cors";
 import { getUserDetails, getUserRepos } from "./Utils/retrieve.js";
 import saveProfile from "./Utils/saveProfile.js";
+import pool from "./Utils/db.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -16,9 +17,36 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 const port = process.env.PORT || 8000;
-app.listen(port, () => {
-    console.log(`server is running on http://localhost:${port}`);
-});
+const startServer = async () => {
+
+    await pool.execute(`
+    CREATE TABLE IF NOT EXISTS github_profiles (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+
+        username VARCHAR(100) UNIQUE,
+
+        name VARCHAR(255),
+
+        followers INT,
+
+        following INT,
+
+        public_repos INT,
+
+        total_stars INT,
+
+        top_language VARCHAR(100),
+
+        analyzed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    `);
+
+    app.listen(port, () => {
+        console.log("Server running");
+    });
+}
+
+startServer();
 
 app.post("/fetch", async (req, res) => {
     const { username } = req.body;
