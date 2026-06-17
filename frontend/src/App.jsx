@@ -2,6 +2,7 @@ import { useState } from 'react'
 import LandingPage from './LandingPage';
 import Dashboard from './Dashboard';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import URL from './Environment.js';
 import './App.css'
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
       body: JSON.stringify({username})
     }
 
-    const response = await fetch("http://localhost:8000/fetch", options);
+    const response = await fetch(`${URL}/fetch`, options);
     const responseData = await response.json();
     console.log(responseData);
     setData(responseData);
